@@ -1,22 +1,19 @@
-import bodyParser from "body-parser";
 import express from "express";
 import pg from "pg";
-
-// Connect to the database using the DATABASE_URL environment
-//   variable injected by Railway
-const pool = new pg.Pool();
+import { CustomerController } from "./controller/customer";
 
 const app = express();
 const port = process.env.PORT || 3333;
 
-app.use(bodyParser.json());
-app.use(bodyParser.raw({ type: "application/vnd.custom-type" }));
-app.use(bodyParser.text({ type: "text/html" }));
+app.use(express.json())
+app.use(express.text())
 
-app.get("/", async (req, res) => {
-  const { rows } = await pool.query("SELECT NOW()");
-  res.send(`Hello, World! The time from the DB is ${rows[0].now}`);
-});
+const customer = new CustomerController()
+app.get('/', (req, res, next) => {
+  return res.send('O tcc dos noia')
+})
+app.post('/api/hl7', customer.saveHl7)
+app.post('/api/fhir', customer.saveFhir)
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
